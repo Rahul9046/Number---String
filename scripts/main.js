@@ -1,7 +1,9 @@
 var number=0,fact=0,flag=0;
 
 var factor=function(str,fact){
+
     var splitStr=str.split(" ");
+    console.log(splitStr);
     for(var i=0;i<splitStr.length;i++){
       switch(splitStr[i]){
           case "ten":
@@ -156,215 +158,56 @@ var factor=function(str,fact){
     return fact;
 }
 var findNum=function (str,number,flag) {
-    console.log(number,str);
     var splitStr=str.split(" ");
     for (var i=0; i<splitStr.length; i++) {
         if(splitStr[i]==="billion"){
-             number=factor(splitStr[i].split("billion")[0].toString(),0)*1000000000+findNum(splitStr[i].split("billion")[1].toString(),number,flag);
+             number=factor(splitStr[i].split("billion")[0].toString(),0)*1000000000;
+             findNum(splitStr[i].split("billion")[1].toString());
              break;
         }
        else if(splitStr[i]==="million"){
              if(!number){
-                number=factor(str.split("million")[0].toString(),0)*1000000+findNum(str.split("million")[1].toString(),number,flag);
+                number=factor(str.split("million")[0].toString(),0)*1000000;
              }
              else{
-                number+=factor(str.split(" million")[0].toString(),0)*1000000+findNum(str.split("million")[1].toString(),number,flag);
+                number+=factor(str.split(" million")[0].toString(),0)*1000000;
              }
+             findNum(str.split("million")[1].toString(),number,flag);
              break;
         }
        else if(splitStr[i]==="thousand"){
            
            if(!number){
-             number=factor(str.split("thousand")[0].toString(),0)*1000+findNum(str.split("thousand")[1].toString(),number,flag);
+             number=factor(str.split("thousand")[0].toString(),0)*1000;
            }
            else{
-             number+=factor(str.split("thousand")[0].toString(),0)*1000+findNum(str.split("thousand")[1].toString(),number,flag);  
+             number+=factor(str.split("thousand")[0].toString(),0)*1000;  
            }
-             
+             findNum(str.split("thousand")[1].toString(),number,flag);
              break;
         }
       else if(splitStr[i]==="hundred"){
           flag=1;
           if(!number){
-             number=factor(str.split("hundred")[0].toString(),0)*100+ findNum(str.split("hundred")[1].toString(),number,flag);
+             number=factor(str.split("hundred")[0].toString(),0)*100;
           } 
           else{
-             number+=factor(str.split("hundred")[0].toString(),0)*100+ findNum(str.split("hundred")[1].toString(),number,flag);
+             number+=factor(str.split("hundred")[0].toString(),0)*100;
           }
+             findNum(str.split("hundred")[1].toString(),number,flag);
              break;
         }
       else{
           if(flag){
               number+=factor(str,0);
               flag=0;
-          }
-          else if(i===splitStr.length-1){
-              number=factor(str,0);
+              console.log(number);
           }
       }     
     }
-
-      return number;
-    }
-
- var parseSentence=function(str){
-      var splitStr=str.split(" "),
-           parsedStr="",toBeParsed="",flag=0;
-      for(var i=0;i<splitStr.length;i++){
-          switch(splitStr[i]){
-          case "ten":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="ten "; 
-                   break;
-          case "twenty":
-                   if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="twenty "; 
-                   break;
-          case "thirty":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="thirty "; 
-                   break;
-          case "forty":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="forty "; 
-                   break;
-          case "fifty":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="fifty "; 
-                   break;
-          case "sixty":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="sixty "; 
-                   break;
-          case "seventy":
-                  if(!flag){
-                     flag=1
-                  }
-                  toBeParsed+="seventy "; 
-                   break;
-          case "eighty":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="eighty "; 
-                   break; 
-         case "ninety":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="ninety "; 
-                   break;
-         case "hundred":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="hundred ";
-                   break;
-         case "one":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="one ";
-                   break;
-         case "two":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="two "; 
-                   break; 
-         case "three":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="three "; 
-                   break;  
-         case "four":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="four "; 
-                   break;  
-         case "five":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="five "; 
-                   break;  
-         case "six":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="six "; 
-                   break;
-         case "seven":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="seven "; 
-                   break;  
-         case "eight":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="eight "; 
-                   break;
-         case "nine":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="nine "; 
-                   break; 
-         case "billion":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="billion "; 
-                   break;   
-         case "million":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="million "; 
-                   break;
-         case "thousand":
-                  if(!flag){
-                     flag=1;
-                  }
-                  toBeParsed+="thousand "; 
-                   break;                           
-                          
-        default:
-                if(!flag){
-                    parsedStr+=splitStr[i]+" ";
-                }
-                else{
-                      if(splitStr[i]!=="and"){
-                       // console.log(toBeParsed);  
-                        parsedStr+=findNum(toBeParsed,0,0)+" "+splitStr[i]+" ";
-                        toBeParsed="";
-                        flag=0;
-                      }
-                } 
-          }              
-         }
-     parsedStr=parsedStr.slice(0,parsedStr.length-1);    
-     return parsedStr;      
- }   
-
+    return number;
+}
 module.exports={
     factor:factor,
-    findNum:findNum,
-    parseSentence:parseSentence
+    findNum:findNum
 };
