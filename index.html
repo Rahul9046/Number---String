@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="scripts/main.js"></script>
+        <script src="scripts/entry.js"></script>
         <style>
             #toConvert{
                 width:300px;
@@ -26,12 +26,13 @@
         <p>Result: <span id="result"></span></p>
         <script>
            document.getElementById("convert").addEventListener("click",function(){
-              var text=document.getElementById("toConvert").value;
               if(document.getElementById("s2n").checked===true){
-                 document.getElementById("result").innerHTML=parseStr(text);
+                 var text=new StrToNum(document.getElementById("toConvert").value); 
+                 document.getElementById("result").innerHTML=text.parseStr();
               } 
               else if(document.getElementById("n2s").checked===true){
-                 document.getElementById("result").innerHTML=parseNum(text);
+                 var text=new NumToStr(document.getElementById("toConvert").value); 
+                 document.getElementById("result").innerHTML=text.parseNum();
               }
               else{
                   alert("Please select an option");
