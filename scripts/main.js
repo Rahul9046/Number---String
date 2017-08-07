@@ -83,7 +83,7 @@ var keywords= {
                    "ninth":[9,"th"],
                    "tenth":[10,"th"],
                    "eleventh":[11,"th"],
-                   "twelvth":[12,"th"],
+                   "twelfth":[12,"th"],
                    "thirteenth":[13,"th"],
                    "fourteenth":[14,"th"],
                    "fifteenth":[15,"th"],
@@ -93,7 +93,89 @@ var keywords= {
                    "nineteenth":[19,"th"],
                    "twentyth":[20,"th"]
                }
-            };           
+            };
+                       
+
+
+function StrToNum(str){
+    this.str=str;
+}
+StrToNum.prototype.parseStr=function() {
+   var str=this.str;  
+   var parsedStr="",toBeParsed="",flag=0;
+   var splitStr=str.split(" ");
+   for(var i=0; i<splitStr.length; i++) { 
+        if(keywords.factors.hasOwnProperty(splitStr[i])) {    
+        toBeParsed +=splitStr[i]+" ";
+        if(i===splitStr.length-1) {
+            toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);   
+            parsedStr+=findNum(toBeParsed,0,1,"")+" "; 
+            toBeParsed="",flag=0;
+        }
+            flag=1; 
+        }
+        else if(keywords.multipliers.hasOwnProperty(splitStr[i])) {
+        toBeParsed+=splitStr[i]+" ";
+        if(i===splitStr.length-1) {
+            toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);    
+            parsedStr +=findNum(toBeParsed,0,1,"")+" ";
+            toBeParsed="",flag=0;
+        }
+            flag=1; 
+        }
+        else if(keywords.cardinal.hasOwnProperty(splitStr[i])) {
+        toBeParsed+=splitStr[i]+" ";
+        if(i===splitStr.length-1) {
+            toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);    
+            parsedStr +=findNum(toBeParsed,0,1,"")+" ";
+            toBeParsed="",flag=0;
+        }
+            flag=1; 
+        }
+        else if(splitStr[i]==="and" && flag===1) {
+            continue;
+        }
+        else {
+            if(flag==1) {
+            toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);    
+            parsedStr +=findNum(toBeParsed,0,1,"")+" "+splitStr[i]+" ";
+            toBeParsed="",flag=0;
+            }
+            else {
+                parsedStr +=splitStr[i]+" ";
+            }
+        }    
+    }
+    parsedStr=parsedStr.slice(0,parsedStr.length-1);
+    return parsedStr;
+   }
+function NumToStr(num){
+    this.num=num;
+}     
+NumToStr.prototype.parseNum=function () {
+   var str=this.num;
+   var splitStr=str.split(" ");
+   var parsedStr="";
+   for(var i=0; i<splitStr.length; i++) {
+      if(splitStr[i].slice(-2)==="th" || splitStr[i].slice(-2)==="st" || splitStr[i].slice(-2)==="rd" || splitStr[i].slice(-2)==="nd") {
+          if(isNaN(splitStr[i].slice(0,splitStr[i].length-2))===false) { 
+             parsedStr +=findStr(splitStr[i])+" ";
+          }
+          else{
+             parsedStr +=splitStr[i]+" "; 
+          }
+      }
+      else if(isNaN(splitStr[i])===false) {
+         parsedStr +=findStr(splitStr[i])+" ";
+      }
+      else {
+          parsedStr +=splitStr[i]+" ";
+      }
+   }
+   parsedStr=parsedStr.slice(0,parsedStr.length-1);
+   return parsedStr;
+}
+
 var findNum=function (str,number,firstCall,cardinalText) {
     var splitStr=str.split(" "),flag=0;
     if(splitStr[splitStr.length-1].slice(-2)==="th" || splitStr[splitStr.length-1].slice(-2)==="st" || splitStr[splitStr.length-1].slice(-2)==="rd"||splitStr[splitStr.length-1].slice(-2)==="nd") {
@@ -137,9 +219,6 @@ var findNum=function (str,number,firstCall,cardinalText) {
                         number=factor(str);
                     }
                     
-                }
-                else{
-                    number +=factor(str);
                 }
       }
     }
@@ -279,71 +358,4 @@ var findStr=function(num) {
      text=text.slice(0,this.length-1);
    }
    return text;
-}
-var parseStr=function(str) { 
-   var parsedStr="",toBeParsed="",flag=0;
-   var splitStr=str.split(" ");
-   for(var i=0; i<splitStr.length; i++) { 
-        if(keywords.factors.hasOwnProperty(splitStr[i])) {
-        toBeParsed +=splitStr[i]+" ";
-        if(i===splitStr.length-1) {
-            toBeParsed=toBeParsed.slice(0,this.length-1);    
-            parsedStr+=findNum(toBeParsed,0,1,"")+" ";
-            toBeParsed="",flag=0;
-        }
-            flag=1; 
-        }
-        else if(keywords.multipliers.hasOwnProperty(splitStr[i])) {
-        toBeParsed+=splitStr[i]+" ";
-        if(i===splitStr.length-1) {
-            toBeParsed=toBeParsed.slice(0,this.length-1);    
-            parsedStr +=findNum(toBeParsed,0,1,"")+" ";
-            toBeParsed="",flag=0;
-        }
-            flag=1; 
-        }
-        else if(keywords.cardinal.hasOwnProperty(splitStr[i])) {
-        toBeParsed+=splitStr[i]+" ";
-        if(i===splitStr.length-1) {
-            toBeParsed=toBeParsed.slice(0,this.length-1);    
-            parsedStr +=findNum(toBeParsed,0,1,"")+" ";
-            toBeParsed="",flag=0;
-        }
-            flag=1; 
-        }
-        else if(splitStr[i]==="and" && flag===1) {
-            continue;
-        }
-        else {
-            if(flag==1) {
-            toBeParsed=toBeParsed.slice(0,this.length-1);    
-            parsedStr +=findNum(toBeParsed,0,1,"")+" "+splitStr[i]+" ";
-            toBeParsed="",flag=0;
-            }
-            else {
-                parsedStr +=splitStr[i]+" ";
-            }
-        }    
-    }
-    parsedStr=parsedStr.slice(0,this.length-1)
-    return parsedStr;
-   }  
-var parseNum=function (str) {
-   var splitStr=str.split(" ");
-   var parsedStr="";
-   for(var i=0; i<splitStr.length; i++) {
-      if(splitStr[i].slice(-2)==="th" || splitStr[i].slice(-2)==="st" || splitStr[i].slice(-2)==="rd" || splitStr[i].slice(-2)==="nd") {
-          if(isNaN(splitStr[i].slice(0,this.length-2))===false) {
-             parsedStr +=findStr(splitStr[i])+" ";
-          }
-      }
-      else if(isNaN(splitStr[i])===false) {
-         parsedStr +=findStr(splitStr[i])+" ";
-      }
-      else {
-          parsedStr +=splitStr[i]+" ";
-      }
-   }
-   parsedStr=parsedStr.slice(0,this.length-1);
-   return parsedStr;
 }
