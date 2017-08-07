@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <script src="scripts/entry.js"></script>
+        <style>
+            #toConvert{
+                width:300px;
+                height:100px;
+            }
+            #radio_btns{
+                border:2px solid black;
+                width:300px;
+                height:25px;
+            }
+            #result{
+                color:red;
+            }
+        </style>    
+    </head>
+    <body>
+        <div id="radio_btns">
+          <input type="radio" id="s2n" name="type">String to number</input>
+          <input type="radio" id="n2s" name="type">Number to string</input>
+        </div></br>
+        <textarea id="toConvert"></textarea></br></br>
+        <input type="button" id="convert" value="Convert"></input></br></br>
+        <p>Result: <span id="result"></span></p>
+        <script>
+           document.getElementById("convert").addEventListener("click",function(){
+              if(document.getElementById("s2n").checked===true){
+                 var text=new StrToNum(document.getElementById("toConvert").value); 
+                 document.getElementById("result").innerHTML=text.parseStr();
+              } 
+              else if(document.getElementById("n2s").checked===true){
+                 var text=new NumToStr(document.getElementById("toConvert").value); 
+                 document.getElementById("result").innerHTML=text.parseNum();
+              }
+              else{
+                  alert("Please select an option");
+              }
+
+           });
+        </script>    
+    </body>
+</html>    
