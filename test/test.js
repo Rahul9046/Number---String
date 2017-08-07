@@ -31,8 +31,8 @@ describe("Number<-->String converter",function(){
            expect(test3).toBe(6012652);
            var test4=findNum("twenty one quintillion eleven quadrillion nine trillion sixteen billion twelve million one hundred and twelve thousand nine hundred and ten",0,1,"");
            expect(test4).toBe(21011009016012112910);
-           var test5=findNum("one hundred and sixty one",0,1,"");
-           expect(test5).toBe(161);
+           var test5=findNum("one thousand and sixty one",0,1,"");
+           expect(test5).toBe(1061);
       });
       it("cardinal numbers",function(){
            var test1=findNum("one million two hundred thousand six hundred and fifty second",0,1,"");
@@ -68,36 +68,38 @@ describe("Number<-->String converter",function(){
       var test2=findStr("11200616th");
       expect(test2).toBe("eleven million two hundred thousand six hundred and sixteenth");
       var test2=findStr("1012th");
-      expect(test2).toBe("one thousand and twelvth");
+      expect(test2).toBe("one thousand and twelfth");
    });  
  });  
  describe("testing for parsedStr",function(){
     it("non-cardinal strings",function(){
-      var test1=parseStr("This is twenty one");
+      var test1=new StrToNum("This is twenty one").parseStr();
       expect(test1).toBe("This is 21");
-      var test2=parseStr("There are two hundred thousand six hundred and ten classes and one million sixteen hundred students in this university");
+      var test2=new StrToNum("There are two hundred thousand six hundred and ten classes and one million sixteen hundred students in this university").parseStr();
       expect(test2).toBe("There are 200610 classes and 1001600 students in this university");
-      var test3=parseStr("His score is two thousand");
+      var test3=new StrToNum("His score is two thousand").parseStr();
       expect(test3).toBe("His score is 2000");
      });
      it("cardinal strings",function(){
-      var test1=parseStr("This is twenty first");
+      var test1=new StrToNum("This is twenty first").parseStr();
       expect(test1).toBe("This is 21st");
-     var test2=parseStr("He came third in the class out of three hundred and sixty students");
+      var test2=new StrToNum("He came third in the class out of three hundred and sixty students").parseStr();
       expect(test2).toBe("He came 3rd in the class out of 360 students");
      });
  });
  describe("testing for parsedNum",function(){
      it("non-cardinal strings",function(){
-         var test1=parseNum("My age is 23");
+         var test1=new NumToStr("My age is 23").parseNum();
          expect(test1).toBe("My age is twenty three");
-         var test2=parseNum("There are 1020100015 stars in the sky");
+         var test2=new NumToStr("There are 1020100015 stars in the sky").parseNum();
          expect(test2).toBe("There are one billion twenty million one hundred thousand and fifteen stars in the sky");
+         var test3=new NumToStr("He had 2 eggs with 4 breads").parseNum();
+         expect(test3).toBe("He had two eggs with four breads");
      });
      it("cardinal strings",function(){
-         var test1=parseNum("This is 21st century");
+         var test1=new NumToStr("This is 21st century").parseNum();
          expect(test1).toBe("This is twenty first century");
-         var test2=parseNum("This is the 1020100015th star in the sky");
+         var test2=new NumToStr("This is the 1020100015th star in the sky").parseNum();
          expect(test2).toBe("This is the one billion twenty million one hundred thousand and fifteenth star in the sky");
      });
  }); 
