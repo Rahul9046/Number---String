@@ -79,14 +79,19 @@ describe("Number<-->String converter",function(){
       expect(test2).toBe("There are 200610 classes and 1001600 students in this university");
       var test3=new StrToNum("His score is two thousand").parseStr();
       expect(test3).toBe("His score is 2000");
+      var test4=new StrToNum("The top quality is obviously in the Champions League, and when you get to the semi-finals you have four of the best five or six teams in Europe. So there is a difference of quality, but we believe that it is possible").parseStr();
+      expect(test4).toBe("The top quality is obviously in the Champions League , and when you get to the semi - finals you have 4 of the best 5 or 6 teams in Europe . So there is a difference of quality , but we believe that it is possible");
      });
      it("cardinal strings",function(){
       var test1=new StrToNum("This is twenty first").parseStr();
       expect(test1).toBe("This is 21st");
       var test2=new StrToNum("He came third in the class out of three hundred and sixty students").parseStr();
       expect(test2).toBe("He came 3rd in the class out of 360 students");
-     });
+      var test3=new StrToNum("Infinity Think Tank #one, eleventh Floor., Plot Athree, Block GP, Sector V, Salt Lake City, Kolkata, West Bengal seven hundred thousand and ninety one").parseStr();
+      expect(test3).toBe("Infinity Think Tank # 1 , 11th Floor . , Plot A3 , Block GP , Sector V , Salt Lake City , Kolkata , West Bengal 700091");
+      });
  });
+
  describe("testing for parsedNum",function(){
      it("non-cardinal strings",function(){
          var test1=new NumToStr("My age is 23").parseNum();
@@ -101,6 +106,10 @@ describe("Number<-->String converter",function(){
          expect(test1).toBe("This is twenty first century");
          var test2=new NumToStr("This is the 1020100015th star in the sky").parseNum();
          expect(test2).toBe("This is the one billion twenty million one hundred thousand and fifteenth star in the sky");
-     });
- }); 
+         var test3=new NumToStr("Infinity Think Tank #1, 11th Floor., Plot A3, Block GP, Sector V, Salt Lake City, Kolkata, West Bengal 700091").parseNum();
+         expect(test3).toBe("Infinity Think Tank #one, eleventh Floor., Plot Athree, Block GP, Sector V, Salt Lake City, Kolkata, West Bengal seven hundred thousand and ninety one");
+         var test4=new NumToStr("While I was standing today morning at my bus stop, i saw 1000s of buses passed by without stoping at my stop. Then suddenly 1 taxi stopped with a number plate WB 12D 9872. 2 passengers were already inside and I was the 3rd luckiest one to get inside. I reached office at 9:30 today morning.").parseNum();
+         expect(test4).toBe("While I was standing today morning at my bus stop, i saw thousands of buses passed by without stoping at my stop. Then suddenly one taxi stopped with a number plate WB twelveD nine thousand eight hundred and seventy two. two passengers were already inside and I was the third luckiest one to get inside. I reached office at nine:thirty today morning.");  
+    });
+ });
 });
