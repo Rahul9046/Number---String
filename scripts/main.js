@@ -14,6 +14,17 @@ String.prototype.splitInTwo=function () {
     }
     return twoParts;
 }
+String.prototype.contains=function(arr){
+    var splitStr=this.split("");
+    for(var i=0;i<splitStr.length;i++){
+      for(var a in arr){
+        if(arr[a]===splitStr[i]){
+           return true;
+        }
+      }
+    }
+    return false;
+}
 var keywords= {
                "factors": {
                           "one":1,
@@ -79,7 +90,7 @@ var keywords= {
                    "fifth":[5,"th"],
                    "sixth":[6,"th"],
                    "seventh":[7,"th"],
-                   "eight":[8,"th"],
+                   "eigth":[8,"th"],
                    "ninth":[9,"th"],
                    "tenth":[10,"th"],
                    "eleventh":[11,"th"],
@@ -92,30 +103,56 @@ var keywords= {
                    "eighteenth":[18,"th"],
                    "nineteenth":[19,"th"],
                    "twentyth":[20,"th"]
+               },
+               "pluralMultipliers":{
+                   "hundreds":"100s",
+                   "thousands":"1000s",
+                   "millions":"1000000s",
+                   "billion":"1000000000s",
+                   "trillion":"1000000000000s",
+                   "quadrillion":"1000000000000000s",
+                   "quintillion":"1000000000000000000s"
                }
             };
-                       
+ var separators=['.','-',':','+','_','?','!',',','%','D'];                     
 
 
 function StrToNum(str){
     this.str=str;
 }
 StrToNum.prototype.parseStr=function() {
-   var str=this.str;  
+   var str=processText(this.str,1);
+   str=str.slice(0,str.length-1);
    var parsedStr="",toBeParsed="",flag=0;
    var splitStr=str.split(" ");
-   for(var i=0; i<splitStr.length; i++) { 
-        if(keywords.factors.hasOwnProperty(splitStr[i])) {    
-        toBeParsed +=splitStr[i]+" ";
+   for(var i=0; i<splitStr.length; i++) {
+      if(keywords.factors.hasOwnProperty(splitStr[i].toLowerCase())) {
+        if(splitStr[i+1]!==undefined && keywords.factors.hasOwnProperty(splitStr[i+1].toLowerCase())===false || splitStr[i+1]==="hundred" || splitStr[i]==="hundred" || (splitStr[i].slice(-2)==="ty" && splitStr[i+1].slice(-2)!=="ty")){
+         toBeParsed +=splitStr[i].toLowerCase()+" ";
         if(i===splitStr.length-1) {
             toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);   
             parsedStr+=findNum(toBeParsed,0,1,"")+" "; 
             toBeParsed="",flag=0;
         }
+         flag=1; 
+        }
+        else{
+               toBeParsed +=splitStr[i].toLowerCase()+" ";
+               parsedStr+=findNum(toBeParsed,0,1,"")+" ";
+               toBeParsed="";
+               flag=0;   
+        }    
+        }
+        else if(keywords.multipliers.hasOwnProperty(splitStr[i].toLowerCase())) {
+        toBeParsed+=splitStr[i].toLowerCase()+" ";
+        if(i===splitStr.length-1) {  
+            parsedStr +=findNum(toBeParsed,0,1,"")+" ";
+            toBeParsed="",flag=0;
+        }
             flag=1; 
         }
-        else if(keywords.multipliers.hasOwnProperty(splitStr[i])) {
-        toBeParsed+=splitStr[i]+" ";
+        else if(keywords.cardinal.hasOwnProperty(splitStr[i].toLowerCase())) {
+        toBeParsed+=splitStr[i].toLowerCase()+" ";
         if(i===splitStr.length-1) {
             toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);    
             parsedStr +=findNum(toBeParsed,0,1,"")+" ";
@@ -123,21 +160,15 @@ StrToNum.prototype.parseStr=function() {
         }
             flag=1; 
         }
-        else if(keywords.cardinal.hasOwnProperty(splitStr[i])) {
-        toBeParsed+=splitStr[i]+" ";
-        if(i===splitStr.length-1) {
-            toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);    
-            parsedStr +=findNum(toBeParsed,0,1,"")+" ";
-            toBeParsed="",flag=0;
-        }
-            flag=1; 
+        else if(keywords.pluralMultipliers.hasOwnProperty(splitStr[i].toLowerCase())){
+            parsedStr +=keywords.pluralMultipliers[splitStr[i].toLowerCase()]+" ";
         }
         else if(splitStr[i]==="and" && flag===1) {
             continue;
         }
         else {
             if(flag==1) {
-            toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);    
+            toBeParsed=toBeParsed.slice(0,toBeParsed.length-1);   
             parsedStr +=findNum(toBeParsed,0,1,"")+" "+splitStr[i]+" ";
             toBeParsed="",flag=0;
             }
@@ -153,10 +184,24 @@ function NumToStr(num){
     this.num=num;
 }     
 NumToStr.prototype.parseNum=function () {
-   var str=this.num;
-   var splitStr=str.split(" ");
+   var splitStr=this.num.split(" ");
    var parsedStr="";
+   for(var i=0; i<splitStr.length; i++){
+       for(var keys in keywords.pluralMultipliers){
+         if(keywords.pluralMultipliers[keys]===splitStr[i]){
+             splitStr[i]=keys;
+         }
+       }
+
+   }
    for(var i=0; i<splitStr.length; i++) {
+       splitStr[i]=checkInBtwForNum(splitStr[i]);
+       for(var keys in keywords.pluralMultipliers){
+          if(splitStr[i]===keywords.pluralMultipliers[keys]){ 
+            parsedStr+=keys+" ";
+            splitStr[i]="";
+          }
+       }
       if(splitStr[i].slice(-2)==="th" || splitStr[i].slice(-2)==="st" || splitStr[i].slice(-2)==="rd" || splitStr[i].slice(-2)==="nd") {
           if(isNaN(splitStr[i].slice(0,splitStr[i].length-2))===false) { 
              parsedStr +=findStr(splitStr[i])+" ";
@@ -165,7 +210,7 @@ NumToStr.prototype.parseNum=function () {
              parsedStr +=splitStr[i]+" "; 
           }
       }
-      else if(isNaN(splitStr[i])===false) {
+      else if(isNaN(splitStr[i])===false && splitStr[i]!=="Infinity") {
          parsedStr +=findStr(splitStr[i])+" ";
       }
       else {
@@ -177,21 +222,29 @@ NumToStr.prototype.parseNum=function () {
 }
 
 var findNum=function (str,number,firstCall,cardinalText) {
-    var splitStr=str.split(" "),flag=0;
+    var splitStr=str.split(" "),flag=0,iniStr;
     if(splitStr[splitStr.length-1].slice(-2)==="th" || splitStr[splitStr.length-1].slice(-2)==="st" || splitStr[splitStr.length-1].slice(-2)==="rd"||splitStr[splitStr.length-1].slice(-2)==="nd") {
             for(var keys in keywords.cardinal) {
                 if(splitStr[splitStr.length-1]===keys) {
                 cardinalText=keywords.cardinal[keys][1];
                 }
             }
-        }    
+        }
+      if(firstCall){
+        iniStr=str;
+      }      
       for(var i=0; i<splitStr.length; i++) {
         for(var keys in keywords.multipliers) {
             if(splitStr[i]===keys) {
              flag=1; 
                if(firstCall) {
                  firstCall=0;
-                 number=factor(str.splitInTwo(keys)[0])*keywords.multipliers[keys] + findNum(str.splitInTwo(keys)[1],number,firstCall,cardinalText)+cardinalText;
+                 if(str.splitInTwo(keys)[1] !== " " && str.splitInTwo(keys)[1] !== ""){
+                   number=Number(factor(str.splitInTwo(keys)[0]))*keywords.multipliers[keys] + findNum(str.splitInTwo(keys)[1],number,firstCall,cardinalText)+cardinalText;  
+                 }
+                 else{
+                    number=Number(factor(str.splitInTwo(keys)[0]))*keywords.multipliers[keys]+cardinalText; 
+                 }
                 if(cardinalText==="") {
                    number=Number(number);
                  } 
@@ -222,7 +275,9 @@ var findNum=function (str,number,firstCall,cardinalText) {
                 }
       }
     }
-
+    if(number===0){ 
+       return iniStr;
+    }
     return number;
 }
 
@@ -358,4 +413,112 @@ var findStr=function(num) {
      text=text.slice(0,this.length-1);
    }
    return text;
+}
+
+var processText=function(str){ 
+   if(arguments[1]===1){
+     var pattern=/[A-z]/;
+   }
+   else{
+     var pattern=/[0-9A-z]/;
+   }
+   var splitStr=str.split(" "),processedText="";
+   for(var i=0; i<splitStr.length; i++){
+     if(splitStr[i].contains(separators)){
+        var toBeParsed=[],index=0,splitAgain=splitStr[i].split("");
+        toBeParsed[index]="";  
+        for(var j=0; j<splitAgain.length; j++){
+          if(pattern.test(splitAgain[j]) && splitAgain[j].contains(separators)===false){
+             toBeParsed[index]+=splitAgain[j];
+        }
+      else{
+          
+          toBeParsed[++index]=splitAgain[j];
+          index+=1;
+          toBeParsed[index]="";
+      }
+       }
+   if(toBeParsed[toBeParsed.length-1]===""){
+     toBeParsed.pop();
+    }
+    processedText+=toBeParsed.join(" ").toString()+" ";
+     }
+     else{
+         processedText+=splitStr[i]+" ";
+     }
+   }
+ return processedText;
+}
+var reprocess=function(str){
+  var reprocessedStr="",splitStr=str.split("");
+  for(var i=0;i<splitStr.length;i++){
+    if(splitStr[i].contains(separators)===false && splitStr[i]!==" "){
+      reprocessedStr+=splitStr[i];
+    }
+    else if(splitStr[i]===" "){
+       if(splitStr[i+1].contains(separators)){
+           continue;
+       }
+       else{
+           reprocessedStr+=splitStr[i];
+       }
+    }
+    else if(splitStr[i].contains){
+       reprocessedStr+=splitStr[i];
+    }
+  }
+  return reprocessedStr;
+}
+
+var checkInBtwForNum=function(str){
+    var splitStr=str.split(""),parsedStr="",toBeParsed="";
+    for(var i=0;i<splitStr.length;i++){ 
+      if((isNaN(splitStr[i-1])===false) && ((splitStr[i]=='s' && splitStr[i+1]=='t') || (splitStr[i]=='r' && splitStr[i+1]=='d') || (splitStr[i]=='t' && splitStr[i+1]=='h') || (splitStr[i]=='n' && splitStr[i+1]=='d'))){
+              toBeParsed+=splitStr[i];
+              if(i===splitStr.length-1){
+               parsedStr+=findStr(toBeParsed);
+              }
+      }  
+      else if((isNaN(splitStr[i-2])===false) && ((splitStr[i]=='t' && splitStr[i-1]=='s') || (splitStr[i]=='d' && splitStr[i-1]=='r') || (splitStr[i]=='h' && splitStr[i-1]=='t') || (splitStr[i]=='d' && splitStr[i-1]=='n'))){
+              toBeParsed+=splitStr[i];
+              if(i===splitStr.length-1){
+               parsedStr+=findStr(toBeParsed);
+              }
+      }
+      else if(isNaN(splitStr[i])===false){
+         toBeParsed+=splitStr[i];
+         if(i===splitStr.length-1){
+           parsedStr+=findStr(toBeParsed);
+         }
+      }
+      else{
+          if(toBeParsed!==""){
+            parsedStr+=findStr(toBeParsed)+splitStr[i];
+            toBeParsed="";
+          }
+          else{
+              parsedStr+=splitStr[i];
+          }
+      }
+    }
+    return parsedStr;
+}
+var checkInBtwForStr=function(str){
+   var splitStr=str.split(""),toBeParsed="",parsedStr="";
+   for(var i=0;i<splitStr.length;i++){
+     toBeParsed+=splitStr[i];
+     if(isNaN(findNum(toBeParsed))===true){
+        parsedStr+=splitStr[i];
+     }
+     else{
+         parsedStr+=findNum(toBeParsed);
+         toBeParsed="";
+     }
+     if(i===splitStr.length-1){  
+       if(toBeParsed!==""){
+         parsedStr+=toBeParsed;
+       }
+       return parsedStr;
+     }
+   }
 }
