@@ -449,27 +449,6 @@ var processText=function(str){
    }
  return processedText;
 }
-var reprocess=function(str){
-  var reprocessedStr="",splitStr=str.split("");
-  for(var i=0;i<splitStr.length;i++){
-    if(splitStr[i].contains(separators)===false && splitStr[i]!==" "){
-      reprocessedStr+=splitStr[i];
-    }
-    else if(splitStr[i]===" "){
-       if(splitStr[i+1].contains(separators)){
-           continue;
-       }
-       else{
-           reprocessedStr+=splitStr[i];
-       }
-    }
-    else if(splitStr[i].contains){
-       reprocessedStr+=splitStr[i];
-    }
-  }
-  return reprocessedStr;
-}
-
 var checkInBtwForNum=function(str){
     var splitStr=str.split(""),parsedStr="",toBeParsed="";
     for(var i=0;i<splitStr.length;i++){ 
@@ -502,23 +481,4 @@ var checkInBtwForNum=function(str){
       }
     }
     return parsedStr;
-}
-var checkInBtwForStr=function(str){
-   var splitStr=str.split(""),toBeParsed="",parsedStr="";
-   for(var i=0;i<splitStr.length;i++){
-     toBeParsed+=splitStr[i];
-     if(isNaN(findNum(toBeParsed))===true){
-        parsedStr+=splitStr[i];
-     }
-     else{
-         parsedStr+=findNum(toBeParsed);
-         toBeParsed="";
-     }
-     if(i===splitStr.length-1){  
-       if(toBeParsed!==""){
-         parsedStr+=toBeParsed;
-       }
-       return parsedStr;
-     }
-   }
 }
